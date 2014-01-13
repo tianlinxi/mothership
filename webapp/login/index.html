@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="login-bg">
+<head>
+    <title>数学提高班</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+    <!-- libraries -->
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/signin.css" type="text/css" media="screen"/>
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <script src="angular.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script>
+        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+        vendorName = window.navigator.vendor;
+        if (is_chrome === true && vendorName === "Google Inc.") {
+            // is Google chrome
+        } else {
+            // not Google chrome
+            window.open("views/chrome.html", "_self");
+        }
+    </script>
+</head>
+
+<body style="background: url('landscape.jpg') no-repeat center center fixed;">
+
+<div ng-app ng-controller="login_controller" class="login-wrapper">
+    <div ng-cloak class="box" style="margin-top: 50px">
+        <div class="content-wrap">
+            <h3 style="text-align: center;margin-bottom: 20px;">
+                数学提高班
+            </h3>
+
+            <div ng-show="loggedin">
+                <div>
+                    <button class="ladda-button btn btn-success btn-lg btn-block" ng-click="dispatch()">
+                        开始学习
+                    </button>
+                </div>
+                <div style="margin-top: 20px">
+                    <button ng-click="signout()" class="ladda-button btn btn-link" ng-click="signout()">
+                        我不是 {{user.username}} 重新登录
+                    </button>
+                </div>
+            </div>
+            <div ng-hide="loggedin">
+                <input required type="text" class="form-control input" placeholder="用户名" ng-model="username">
+                <input required type="password" class="form-control input" placeholder="密码" ng-model="password">
+                <button type="submit" ng-click="login()" style="margin-top: 20px"
+                        class="btn btn-lg btn-success btn-block">登录
+                </button>
+            </div>
+            <p style="margin-top: 20px;font-size: 16px">{{message}}</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var login_controller = function ($scope, $http) {
+
+        var toast = function (msg, type) {
+            $scope.message = msg;
+        }
+
+        var resetform = function () {
+            delete $scope.username;
+            delete $scope.password;
+            delete $scope.message;
+        }
+
+        var checklogin = function () {
+            $http.get('/users/me')
+                    .success(function (data, status, headers, config) {
+                        $scope.status = "logged in";
+                        $scope.user = data;
+                        $scope.loggedin = true;
+                        console.log('logged in,%s', data);
+                    }).error(function (data, status, headers, config) {
+                        $scope.status = "login failed";
+                        delete $scope.user;
+                        $scope.loggedin = false;
+                        console.log('not logged in');
+                    });
+        }
+
+        $scope.login = function () {
+            $http.post('/login', {
+                username: $scope.username,
+                password: $scope.password
+            }).success(function (data, status, headers, config) {
+                        resetform();
+                        checklogin();
+                    }).error(function (data, status, headers, config) {
+                        checklogin();
+                        toast("用户名不存在或者密码错误");
+                    });
+        };
+        $scope.signout = function () {
+            $http.get('/signout')
+                    .success(function (data, status, headers, config) {
+                        checklogin();
+                    })
+                    .error(function (data, status, headers, config) {
+                        location.reload();
+                    });
+        };
+        $scope.dispatch = function () {
+            window.location = "/dispatch";
+        }
+
+        checklogin();
+    }
+
+</script>
+
+<script src="js/spin.min.js"></script>
+<script src="js/ladda.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">
+</script>
+<script type="text/javascript">
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F74c8ba83c3f7b407b34f7edb166aa3ad' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script>
+    $(document).ready(function () {
+        var baiduLogo = document.getElementsByTagName("a")[0];
+        baiduLogo.style.display = "none";
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html ng-app>
+<head>
+    <title>数学提高班</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+    <!-- libraries -->
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/signin.css" type="text/css" media="screen"/>
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <script src="angular.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script>
+        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+        vendorName = window.navigator.vendor;
+        if (is_chrome === true && vendorName === "Google Inc.") {
+            // is Google chrome
+        } else {
+            // not Google chrome
+            window.open("views/chrome.html", "_self");
+        }
+    </script>
+</head>
+<body ng-controller="profile" style="background: url('landscape.jpg') no-repeat center center fixed;">
+
+
+<div ng-app ng-controller="profile" class="login-wrapper">
+    <div ng-cloak class="box" style="margin-top: 50px">
+        <div class="content-wrap">
+            <h3 style="text-align: center;margin-bottom: 20px;">
+                欢迎您
+            </h3>
+
+            <div ng-hide="user.active">
+                <label>改密码</label><br>
+                <input type="text" ng-model="newPwd" placeholder="不能为空"><br>
+                <button ng-click="changePwd()">确认</button>
+            </div>
+            <div ng-show="user.active">
+                <input type="radio" value="male" ng-model="user.profile.gender">男
+                <input type="radio" value="female" ng-model="user.profile.gender">女<br>
+                <input type="text" placeholder="2002" ng-model="year">
+                <input type="text" placeholder="01" ng-model="month">
+                <input type="text" placeholder="01" ng-model="date"><br>
+                <button ng-click="changeProfile()">完成并继续</button>
+            </div>
+            <label>{{status}}</label>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var profile = function ($scope, $http, $location) {
+        $scope.status = "";
+        $http.get('/users/me')
+                .success(function (data, status, headers, config) {
+                    $scope.user = data;
+                    try {
+                        birth = new Date(data.profile.birthday);
+                    } catch (e) {
+                        birth = new Date(2002, 1, 1);
+                    }
+                    console.log(birth);
+                    $scope.year = birth.getUTCFullYear();
+                    $scope.month = birth.getUTCMonth() + 1;
+                    $scope.date = birth.getUTCDate();
+                }).error(function (data, status, headers, config) {
+                    $scope.status = "获取信息失败";
+                });
+        $scope.changePwd = function () {
+            $http.post('/users/' + $scope.user._id + '/password', {
+                password: $scope.newPwd}).
+                    success(function (data, status, headers, config) {
+                        $scope.status = "密码修改成功，请重新登录";
+                        setTimeout("window.location='/dispatch'", 3000)
+
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.status = "修改密码失败";
+                    });
+        }
+        $scope.changeProfile = function () {
+            try {
+                if ($scope.user.profile.gender === undefined) {
+                    throw "error";
+                }
+            } catch (e) {
+                $scope.status = "请选择你的性别";
+                return;
+            }
+            try {
+                var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/;
+                var test = $scope.year + "-" + $scope.month + "-" + $scope.date;
+                console.log(test);
+                if (!reg.test(test)) {
+                    throw "error";
+                }
+                date = new Date();
+                date.setUTCFullYear($scope.year);
+                console.log(date);
+                date.setUTCMonth($scope.month - 1);
+                console.log(date);
+                date.setUTCDate($scope.date);
+                console.log(date);
+                $scope.user.profile.birthday = date;
+            } catch (e) {
+                $scope.status = "日期格式验证失败，参考：YYYY MM DD";
+                return;
+            }
+            console.log($scope.user.profile.birthday);
+            $http.post('/users/' + $scope.user._id + '/profile', {
+                gender: $scope.user.profile.gender,
+                birthday: $scope.user.profile.birthday
+            }).
+                    success(function (data, status, headers, config) {
+                        $scope.status = "个人资料修改成功，将进入提高班";
+                        setTimeout("window.location='/dispatch'", 3000)
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.status = "修改个人资料失败";
+                        return;
+                    });
+        }
+    }
+</script>
+</body>
+</html>
