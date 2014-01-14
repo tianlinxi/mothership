@@ -45,25 +45,32 @@
 
 <div ng-app ng-controller="profile" class="login-wrapper">
     <div ng-cloak class="box" style="margin-top: 50px">
-        <div class="content-wrap">
-            <h3 style="text-align: center;margin-bottom: 20px;">
-                欢迎您
-            </h3>
-
+        <div class="content-wrap"  style="font-size:20px">
             <div ng-hide="user.active">
-                <label>改密码</label><br>
-                <input type="text" ng-model="newPwd" placeholder="不能为空"><br>
-                <button ng-click="changePwd()">确认</button>
+	            <h3 style="text-align: center;margin-bottom: 20px;">
+	                欢迎您,请先修改密码
+	            </h3>
+				</span><input type="text" class="form-control input" ng-model="newPwd" placeholder="不能为空"><br>
+                <button ng-click="changePwd()" class="btn btn-lg btn-success btn-block">确认</button>
             </div>
             <div ng-show="user.active">
-                <input type="radio" value="male" ng-model="user.profile.gender">男
-                <input type="radio" value="female" ng-model="user.profile.gender">女<br>
-                <input type="text" placeholder="2002" ng-model="year">
-                <input type="text" placeholder="01" ng-model="month">
-                <input type="text" placeholder="01" ng-model="date"><br>
-                <button ng-click="changeProfile()">完成并继续</button>
+	            <h3 style="margin-bottom: 20px;">
+	                个人档案
+	            </h3>
+				<div class="input-group" style="margin-bottom: 20px;">
+                	<span style="text-align: left;">性别：&nbsp;</span>
+					<input type="radio" value="male"	style="width:18px;height: 1em;" ng-model="user.profile.gender">男
+                	<input type="radio" value="female"	style="width:18px;height: 1em;" ng-model="user.profile.gender">女<br>
+				</div>
+				<div>
+					<p style="text-align: left">生日：</p>
+                		<input type="text" class="form-control input" placeholder="年" ng-model="year" maxlength="4" />
+                		<input type="text" class="form-control input" placeholder="月" ng-model="month" maxlength="2" />
+						<input type="text" class="form-control input" placeholder="日" ng-model="date" maxlength="2" />
+				</div>
+                <button ng-click="changeProfile()"  class="btn btn-lg btn-success btn-block">完成并继续</button>
             </div>
-            <label>{{status}}</label>
+            <label style="margin-top: 20px;">{{status}}</label>
         </div>
     </div>
 </div>
@@ -92,7 +99,7 @@
                 password: $scope.newPwd}).
                     success(function (data, status, headers, config) {
                         $scope.status = "密码修改成功，请重新登录";
-                        setTimeout("window.location='/dispatch'", 3000)
+                        setTimeout("window.location='/dispatch'", 1000)
 
                     }).
                     error(function (data, status, headers, config) {
@@ -111,17 +118,17 @@
             try {
                 var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/;
                 var test = $scope.year + "-" + $scope.month + "-" + $scope.date;
-                console.log(test);
+                // console.log(test);
                 if (!reg.test(test)) {
                     throw "error";
                 }
                 date = new Date();
                 date.setUTCFullYear($scope.year);
-                console.log(date);
+                // console.log(date);
                 date.setUTCMonth($scope.month - 1);
-                console.log(date);
+                // console.log(date);
                 date.setUTCDate($scope.date);
-                console.log(date);
+                // console.log(date);
                 $scope.user.profile.birthday = date;
             } catch (e) {
                 $scope.status = "日期格式验证失败，参考：YYYY MM DD";
@@ -134,7 +141,7 @@
             }).
                     success(function (data, status, headers, config) {
                         $scope.status = "个人资料修改成功，将进入提高班";
-                        setTimeout("window.location='/dispatch'", 3000)
+                        setTimeout("window.location='/dispatch'", 1000)
                     }).
                     error(function (data, status, headers, config) {
                         $scope.status = "修改个人资料失败";
