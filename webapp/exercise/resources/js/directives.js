@@ -24,7 +24,6 @@ angular.module('SunExercise.directives', [])
             console.log("USERINFO!!" + JSON.stringify(me));
         });
 
-
         return {
             restrict: "E",
             link: function ($scope) {
@@ -108,6 +107,10 @@ angular.module('SunExercise.directives', [])
             restrict: "E",
             link: function ($scope, $element) {
                 var chapterData = chapterSandbox.getChapterMaterial($routeParams.cid);
+                if (!chapterData) {
+                    $location.path("/webapp/exercise");
+                    return;
+                }
                 $scope.title = chapterData.title;
                 $scope.lessons = chapterData.lessons;
                 var lessonState = {};
