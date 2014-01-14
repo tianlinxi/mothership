@@ -22,6 +22,9 @@ angular.module('SunExercise.directives', [])
         var subjectSandbox = SandboxProvider.getSandbox();
         subjectSandbox.getMe(function (err, me) {
             console.log("USERINFO!!" + JSON.stringify(me));
+            //Mixpanel
+            initMixpanel(me._id,me.username,me.utype);
+            signIn();
         });
 
         return {
@@ -53,7 +56,9 @@ angular.module('SunExercise.directives', [])
                     $scope.loadProgress = {};
                     $scope.showProgress = {};
                     $scope.hasCached = {};
+                    var Chapter = {};//Mixpanel
                     angular.forEach(subjectMaterial.chapters, function (chapter) {
+                        Chapter = chapter;
                         var currentStatusPromise = subjectSandbox.getCurrentChapterStatus(chapter.id);
                         currentStatusPromise.then(function (status) {
                             $scope.hasCached[chapter.id] = status;
@@ -65,6 +70,9 @@ angular.module('SunExercise.directives', [])
                         $location.path('/subject/' + subjectId);
                     }
                     $scope.enterChapter = function (chapterId) {
+                        //Mixpanel
+                        LearningRelated.enterChapter(Chapter.id,Chapter.title);
+
                         $rootScope.isBack = false;
                         if ($scope.hasCached[chapterId]) {
                             $location.path('/subject/' + $routeParams.sid + '/chapter/' + chapterId);
@@ -390,6 +398,8 @@ angular.module('SunExercise.directives', [])
                         $rootScope.isBack = false;
                         $('#lessonModal-' + id).modal('hide');
                         $('.modal-backdrop').remove();
+                        //Mixpanel
+                        LearningRelated.enterLesson($scope.id,$scope.title);
 
                         if (typeof lessonUserdata.current_activity === "undefined") {
                             lessonUserdata.current_activity = lessonData.activities[0].id;
@@ -639,6 +649,7 @@ angular.module('SunExercise.directives', [])
                 $scope.activityId = activityData.id;
                 //find the previous problem which the student has entered
                 if (activityData.type === 'quiz') {
+
                     var currProblem = 0;
                     for (var i = 0; i < activityData.problems.length; i++) {
                         if ((activityUserdata.current_problem != "undefined") &&
@@ -648,6 +659,8 @@ angular.module('SunExercise.directives', [])
                         }
                     }
                     $scope.problems = activityData.problems.slice(currProblem);
+                    //Mixpanel
+                    LearningRelated.enterQuiz(activityData.id,activityData.title);
                     $scope.problemIndex = currProblem;
 
                     for (var i = 0; i < $scope.problems.length; i++) {
@@ -844,7 +857,7 @@ angular.module('SunExercise.directives', [])
         }
     })
 
-    .directive("xvideo", function (APIProvider, $compile, $routeParams) {
+    .directive("xvideo", function (SandboxProvider,APIProvider, $compile, $routeParams) {
         //enter fullscreen mode
         var toFullScreen = function (video) {
             //FullScreen First
@@ -873,6 +886,9 @@ angular.module('SunExercise.directives', [])
         return {
             restrict: "E",
             link: function ($scope, $element, $attrs) {
+                var activitySandbox = SandboxProvider.getSandbox();
+                var activityData = activitySandbox.getActivityMaterial($routeParams.aid,null);
+
                 var template = "<video style='display: none' id='video' class='xvideo' src='" +
                     APIProvider.getAPI("getFileResources", {chapterId: $routeParams.cid, lessonId: $routeParams.lid}, "") + "/" + $attrs.src
                     + "' controls></video><br>" +
@@ -888,6 +904,8 @@ angular.module('SunExercise.directives', [])
                     console.log('add listener')
                     if (!document.webkitIsFullScreen) {
                         currentTime = video.currentTime;
+                        //Mixpanel
+                        LearningRelated.finishVideo($attrs.src,activityData.title,currentTime,computeRatio(currentTime/video.duration));
                         video.pause();
                         $scope.$apply(function () {
                             $scope.playButtonMsg = "播放视频";
@@ -895,8 +913,26 @@ angular.module('SunExercise.directives', [])
                     }
                 });
 
+                //Mixpanel
+                var computeRatio = function(ratio){
+                    if(ratio>=0 && ratio<=0.2){
+                        ratio = "0% ~ 20%";
+                    }else if(ratio>0.2 && ratio<=0.4){
+                        ratio = "20% ~ 40%";
+                    }else if(ratio>0.4 && ratio<=0.6){
+                        ratio = "40% ~ 60%";
+                    }else if(ratio>0.6 && ratio<=0.8){
+                        ratio = "60% ~ 80%";
+                    }else{
+                        ratio = "80% ~ 100%"
+                    }
+                    return ratio;
+                }
+
                 $scope.playButtonMsg = "播放视频";
                 $scope.playVideo = function () {
+                    //Mixpanel
+                    LearningRelated.enterVideo($attrs.src,activityData.title,video.duration);
                     if (video.paused == true) {
                         $scope.playButtonMsg = "暂停播放";
                         //send the activityStart event to activity to record the start_time
@@ -1113,9 +1149,16 @@ angular.module('SunExercise.directives', [])
                 //compile multimedia resources
                 var multimediaBody = "<div>" + currProblem.body + "</div>";
                 $scope.body = $compile(multimediaBody)($scope);
+                //Mixpanel
+                $scope.correct_answer_body = [];
+                $scope.user_answer_body = [];
+
                 if (currProblem.type != "singlefilling") {
                     $scope.choiceBody = {};
                     for (var i = 0; i < currProblem.choices.length; i++) {
+                        if (currProblem.choices[i].is_correct) {
+                            $scope.correct_answer_body[currProblem.id] = currProblem.choices[i].body;
+                        }
                         var choiceMultimediaBody = "<div>" + currProblem.choices[i].body + "</div>";
                         $scope.choiceBody[currProblem.choices[i].id] = $compile(choiceMultimediaBody)($scope);
                     }
@@ -1139,6 +1182,7 @@ angular.module('SunExercise.directives', [])
                         $scope.madeChoice = true;
                         $scope.checked[choiceIndex] = "choose";
                         $scope.answer[currProblem.id] = choiceId;
+                        $scope.user_answer_body[currProblem.id] = currProblem.choices[choiceIndex].body;
 
                         $scope.submitAnswer();
 
@@ -1279,6 +1323,8 @@ angular.module('SunExercise.directives', [])
                         //send problem complete event to activity directive
                         problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: true});
                     }
+                    LearningRelated.finishProblem(currProblem.id,currProblem.body,currProblem.type, $scope.correct_answer_body[currProblem.id],
+                        $scope.user_answer_body[currProblem.id], problemUserdata.is_correct,problemUserdata.is_hint_checked,(problemUserdata.submit_time - problemUserdata.enter_time)/1000);
                 }
 
                 //continue button if show_answer=true
