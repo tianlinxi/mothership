@@ -315,6 +315,7 @@ angular.module('SunExercise.directives', [])
         return {
             restrict: "E",
             link: function ($scope, $element) {
+
                 var userinfoDataPromise = lessonSandbox.loadUserInfo();
                 var lessonMaterialPromise, lessonUserdataPromise;
                 if (typeof $scope.obj != "undefined") {
@@ -363,7 +364,9 @@ angular.module('SunExercise.directives', [])
                     if ((lessonUserdata.is_complete) && (typeof lessonUserdata.summary.star != "undefined")) {
                         $scope.lessonIcon = $scope.lessonIconClass = "lesson-button-icon-star" + lessonUserdata.summary.star;
                     } else {
-                        $scope.lessonIcon = $scope.lessonIconClass = "lesson-button-icon-unlocked";
+                        console.log('===================isFirst: '+$scope.isFirst+'==================');
+                        $scope.lessonIcon = "lesson-button-icon-unlocked";
+                        $scope.lessonIconClass = "lesson-button-icon-unlocked-"+$scope.isFirst;
                     }
                     if (typeof lessonUserdata.current_activity === "undefined") {
                         $scope.buttonMsg = "开始学习";
