@@ -6,7 +6,7 @@ angular.module("SunExercise", ['SunExercise.controllers', 'SunExercise.directive
         var initResourcePromise = deferred.promise;
 
         var appSandbox = SandboxProvider.getSandbox();
-        appSandbox.getMe(function (err, me) {
+        appSandbox.fetchMe(function (err, me) {
             if (err) window.location = "/";
             MaterialProvider.getRoot().then(function (rootMaterial) {
                 deferred.resolve("done");
@@ -17,6 +17,7 @@ angular.module("SunExercise", ['SunExercise.controllers', 'SunExercise.directive
 
             $rootScope.initResourcePromise = initResourcePromise;
             $rootScope.isBack = false;
+            $rootScope.me = me;
             var temp = '';
             var params = {};
             //var pathParams = '';
