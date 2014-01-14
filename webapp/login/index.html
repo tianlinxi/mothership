@@ -137,16 +137,17 @@
 <script src="js/jquery.min.js"></script>
 <script type="text/javascript">
 </script>
-<script type="text/javascript">
-    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F74c8ba83c3f7b407b34f7edb166aa3ad' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script>
-    $(document).ready(function () {
-        var baiduLogo = document.getElementsByTagName("a")[0];
-        baiduLogo.style.display = "none";
-    })
-</script>
+
+<div id="baidutongji">
+    <script type="text/javascript">
+        var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F010203819208ca8ab53be35241149911' type='text/javascript'%3E%3C/script%3E"));
+        $(document).ready(function () {
+            var baiduLogo = document.getElementById("baidutongji");
+            baiduLogo.style.display = "none";
+        })
+    </script>
+</div>
 
 </body>
 </html>
