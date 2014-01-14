@@ -16,6 +16,7 @@ var UserSchema = new Schema({
     email: String,
     usergroup: String,
     profile: {
+        room: String,
         gender: String,
         birthday: Date
     },
