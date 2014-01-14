@@ -8,6 +8,7 @@ angular.module("SunExercise", ['SunExercise.controllers', 'SunExercise.directive
         var appSandbox = SandboxProvider.getSandbox();
         appSandbox.getMe(function (err, me) {
             if (err) window.location = "/";
+            $rootScope.user = me;
             MaterialProvider.getRoot().then(function (rootMaterial) {
                 deferred.resolve("done");
             }, function (data, err) {
@@ -23,7 +24,7 @@ angular.module("SunExercise", ['SunExercise.controllers', 'SunExercise.directive
             $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
                 if (previous) {
                     if (temp == current.templateUrl && $rootScope.isBack) {
-                        $location.path('/login').replace();
+                        window.location = "/";
                         return;
                     }
                     temp = previous.templateUrl;

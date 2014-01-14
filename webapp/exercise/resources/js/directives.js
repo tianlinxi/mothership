@@ -145,10 +145,15 @@ angular.module('SunExercise.directives', [])
                     }
                 }
                 $scope.lessonIsLoaded = function (lesson) {
+                    var user = $rootScope.user;
                     if (lesson.status == 'closed') {
                         return false;
                     }
-                    return true;
+
+                    if(user.usergroup == 'teacher') {
+                        return true;
+                    } 
+                    
                     //var lesson = chapterData.lessons[lessonIndex];
                     if (typeof lesson.requirements == 'undefined') {
                         return true;
