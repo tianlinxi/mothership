@@ -111,7 +111,7 @@ angular.module('SunExercise.directives', [])
                     $location.path("/webapp/exercise");
                     return;
                 }
-                $scope.title = chapterData.title;
+                $scope.chapterTitle = chapterData.title;
                 $scope.lessons = chapterData.lessons;
                 var lessonState = {};
                 for (var i = 0; i < chapterData.lessons.length; i++) {
