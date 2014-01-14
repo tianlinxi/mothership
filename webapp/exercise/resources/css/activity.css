@@ -123,7 +123,7 @@ ximage {
   max-width: 100%;
 }
 .choice-layout-card-state-wrong {
-  background-color: red;
+  background-color: #f4a5aa;
   color: white;
   width: 100%;
   height: 225px;
