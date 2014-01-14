@@ -23,8 +23,7 @@ angular.module('SunExercise.directives', [])
         subjectSandbox.getMe(function (err, me) {
             console.log("USERINFO!!" + JSON.stringify(me));
             //Mixpanel
-            initMixpanel(me._id,me.username,me.utype);
-            signIn();
+            initMixpanel(me._id/*,me.username,me.utype*/);
         });
 
         return {
@@ -926,8 +925,10 @@ angular.module('SunExercise.directives', [])
                         ratio = "40% ~ 60%";
                     }else if(ratio>0.6 && ratio<=0.8){
                         ratio = "60% ~ 80%";
+                    }else if(ratio>0.8 && ratio<=1){
+                        ratio = "80% ~ 100%";
                     }else{
-                        ratio = "80% ~ 100%"
+                        ratio = "Error";
                     }
                     return ratio;
                 }
@@ -1080,7 +1081,6 @@ angular.module('SunExercise.directives', [])
 
         //create the problem sandbox
         var problemSandbox = SandboxProvider.getSandbox();
-
 
         return {
             restrict: "E",
@@ -1327,7 +1327,7 @@ angular.module('SunExercise.directives', [])
                         problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: true});
                     }
                     LearningRelated.finishProblem(currProblem.id,currProblem.body,currProblem.type, $scope.correct_answer_body[currProblem.id],
-                        $scope.user_answer_body[currProblem.id], problemUserdata.is_correct,problemUserdata.is_hint_checked,(problemUserdata.submit_time - problemUserdata.enter_time)/1000);
+                        $scope.user_answer_body[currProblem.id], problemUserdata.is_correct,problemUserdata.is_hint_checked/*,(problemUserdata.submit_time - problemUserdata.enter_time)/1000*/);
                 }
 
                 //continue button if show_answer=true

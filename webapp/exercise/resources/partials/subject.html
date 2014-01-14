@@ -11,10 +11,9 @@
                 </div>
             </div>
 			
-			<div class="btn btn-block btn-danger" style="position:absolute;bottom: 0; width: 90%;margin:5%">
-                <a href="javascript:void(0)" id="btn-signout" onclick="UserRelated.logout()"
-                   style="text-decoration:none; color:white; font-size:20px;width:100%;height:auto; display:block; text-align:center">登出</a>
-			</div>
+			<div ng-app ng-controller="login_controller" class="btn btn-block btn-danger"
+                 style="position:absolute;bottom: 0; width: 90%;margin:5%; font-size:20px" ng-click="signout()">登出
+            </div>
         </nav>
 
         <div class="page-wrap" style="width:100%; left:{{ offsetWidth }}">
@@ -41,3 +40,37 @@
         </div>
     </div>
 </subject>
+<script>
+    var login_controller = function ($scope, $http) {
+
+        var checklogin = function () {
+            $http.get('/users/me')
+                    .success(function (data, status, headers, config) {
+                        $scope.status = "logged in";
+                        $scope.user = data;
+                        $scope.loggedin = true;
+                        console.log('logged in,%s', data);
+                    }).error(function (data, status, headers, config) {
+                        UserRelated.logout();
+                        $scope.status = "login failed";
+                        delete $scope.user;
+                        $scope.loggedin = false;
+                        console.log('not logged in');
+                    });
+        }
+
+        $scope.signout = function () {
+            $http.get('/signout')
+                    .success(function (data, status, headers, config) {
+                        checklogin();
+                        window.open("/webapp/login","_self");
+                    })
+                    .error(function (data, status, headers, config) {
+                        location.reload();
+                    });
+        };
+
+        checklogin();
+    }
+
+</script>

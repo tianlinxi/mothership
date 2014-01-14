@@ -9,11 +9,12 @@
         },
 
         // SP means super properties, which is an usage of Mixpanel.
-        registerSP: function(id,user_name,name){
+        registerSP: function(id,user_name,name,user_group){
             mixpanel.register({
                 UserId:id,
                 UserName:user_name,
-                Name:name
+                Name:name,
+                UserGroup:user_group
             });
         },
 
@@ -25,13 +26,22 @@
             mixpanel.track("Logout");
         },
 
-        setActive: function(){
+        setActive: function(callback){
             mixpanel.people.set_once("FirstActive", new Date());
             mixpanel.people.set("LastActive", new Date());
+        },
+
+        setProfile: function(id,user_name,name,user_group){
+            mixpanel.people.set({
+                UserId:id,
+                UserName:user_name,
+                $name:name, // SP to show on Profile MainPage.
+                UserGroup:user_group
+            })
         }
     }
 
-    var LearningRelated = {    // TODO: change data structure ?
+    var LearningRelated = {
 
         enterChapter: function(id,title){
             mixpanel.track("EnterChapter",{ChapterId:id, ChapterTitle:title});
@@ -53,7 +63,7 @@
             mixpanel.track("EnterQuiz",{QuizId:id, QuizTitle:title});
         },
 
-        finishProblem: function(id,body,type,correct_answer,user_answer,correct_or_not,hint_or_not/*,time_spent*/){
+        finishProblem: function(id,body,type,correct_answer,user_answer,correct_or_not,hint_or_not,time_spent){
             mixpanel.track("FinishProblem",{
                 ProblemId:id,
                 ProblemBody:body,
@@ -61,8 +71,8 @@
                 CorrectAnswer:correct_answer,
                 UserAnswer:user_answer,
                 CorrectOrNot:correct_or_not, //boolean
-                HintOrNot:hint_or_not //boolean
-               // TimeSpent:time_spent
+                HintOrNot:hint_or_not, //boolean
+                TimeSpent:time_spent
             });
         }
 
@@ -77,13 +87,13 @@
 
     //var BrowserRelated = {}
 
-    function initMixpanel(id,user_name,name){
-        UserRelated.identifyId(id/*,UserRelated.registerSP(id,user_name,name)*/);
+    function initMixpanel(id,user_name,name,user_group){
+        UserRelated.identifyId(id,UserRelated.registerSP(id,user_name,name,user_group));
     }
 
-    /*function signIn(){
-        UserRelated.login(UserRelated.setActive());
-    }*/
+    function signIn(id,user_name,name,user_group){
+        UserRelated.login(UserRelated.setActive(UserRelated.setProfile(id,user_name,name,user_group)));
+    }
 
 
 
