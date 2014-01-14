@@ -1578,6 +1578,7 @@ angular.module('SunExercise.directives', [])
 
                     var enter_lesson = data.enter_lesson;
 
+
                     (function getInitArray(lessons) {
                         if (count >= mlength) return;
                         var key = lessons[0].id;
@@ -1592,6 +1593,18 @@ angular.module('SunExercise.directives', [])
                         getInitArray(targetLessons);
                     })(firsrtLessons);
 
+                    var flag = $scope.allLessons.length-1;
+                    var lastLessons = $scope.allLessons[flag].splice(1);
+                    
+                    (function convertLessons(insertLessons) {
+                        if(flag <= 0) return;
+                        flag--;
+                        var newInsertLessons = $scope.allLessons[flag].splice(1);
+                        Array.prototype.push.apply($scope.allLessons[flag], insertLessons);
+                        convertLessons(newInsertLessons);
+                    })(lastLessons);
+
+                    //
                     console.log('result=' + $scope.allLessons.length);
                 }
                 $compile($element.contents())($scope);
