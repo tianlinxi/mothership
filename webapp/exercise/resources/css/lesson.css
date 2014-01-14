@@ -56,8 +56,15 @@
     overflow: hidden;
 }
 
-.lesson-button-icon-unlocked {
+.lesson-button-icon-unlocked-false {
     background-color: #64b7e9;
+    height: 72px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.lesson-button-icon-unlocked-true {
+    background-color: #7e6cdb;
     height: 72px;
     text-align: center;
     overflow: hidden;
