@@ -20,6 +20,10 @@ angular.module('SunExercise.directives', [])
 
         //create the subject sandbox 
         var subjectSandbox = SandboxProvider.getSandbox();
+        subjectSandbox.getMe(function (err, me) {
+            console.log("USERINFO!!" + JSON.stringify(me));
+        });
+
 
         return {
             restrict: "E",
@@ -100,7 +104,6 @@ angular.module('SunExercise.directives', [])
 
         //create the chapter sandbox
         var chapterSandbox = SandboxProvider.getSandbox();
-
         return {
             restrict: "E",
             link: function ($scope, $element) {
@@ -121,6 +124,7 @@ angular.module('SunExercise.directives', [])
                 })
                 $scope.loadLesson = function (lessonIndex) {
                     var lesson = chapterData.lessons[lessonIndex];
+
                     if (lesson.status == "closed") {
                         return false;
                     }
@@ -137,8 +141,8 @@ angular.module('SunExercise.directives', [])
                         return true;
                     }
                 }
-                 $scope.lessonIsLoaded = function (lesson) {
-                    if(lesson.status == 'closed') {
+                $scope.lessonIsLoaded = function (lesson) {
+                    if (lesson.status == 'closed') {
                         return false;
                     }
                     return true;
@@ -153,7 +157,7 @@ angular.module('SunExercise.directives', [])
                         }
                         return true;
                     }
-                }               
+                }
                 $scope.showLockDialogue = function (lessonIndex) {
                     var id = chapterData.lessons[lessonIndex].id;
                     $("#lessonModal-" + id).modal("toggle");
@@ -459,7 +463,7 @@ angular.module('SunExercise.directives', [])
                             //give student star if qualified
                             if (typeof lessonUserdata.summary.correct_percent != "undefined") {
                                 // default star is 3
-                                delete lessonUserdata.summary.star ;
+                                delete lessonUserdata.summary.star;
                                 if ((typeof lessonData.star3 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star3)) {
                                     lessonUserdata.summary.star = 3;
                                 } else if ((typeof lessonData.star2 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star2)) {
@@ -489,7 +493,7 @@ angular.module('SunExercise.directives', [])
                             //send an event to check the global badges
                             lessonSandbox.sendEvent("lesson.complete", $scope);
                             //userdata analyzing completed, flush the current userdata
-                            lessonSandbox.flushUserdata(lessonData.id,$routeParams.cid);
+                            lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
 
                             $scope.hasFinalQuiz = (typeof lessonUserdata.summary.correct_count != "undefined");
                             $scope.lessonCorrectPercent = lessonUserdata.summary.correct_percent;
@@ -517,14 +521,14 @@ angular.module('SunExercise.directives', [])
                                 lessonUserdata.current_activity = args.activity;
                                 if (args.should_transition) {
                                     //userdata analyzing completed, flush the current userdata
-                                    lessonSandbox.flushUserdata(lessonData.id,$routeParams.cid);
+                                    lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
                                     continueLesson(lessonData.id, args.activity);
                                 }
                             } else if (index != lessonData.activities.length - 1) {
                                 lessonUserdata.current_activity = lessonData.activities[index + 1].id;
                                 if (args.should_transition) {
                                     //userdata analyzing completed, flush the current userdata
-                                    lessonSandbox.flushUserdata(lessonData.id,$routeParams.cid);
+                                    lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
                                     continueLesson(lessonData.id, lessonData.activities[index + 1].id);
                                 }
                             } else {
@@ -577,7 +581,7 @@ angular.module('SunExercise.directives', [])
                                     //send an event to check the global badges
                                     lessonSandbox.sendEvent("lesson.complete", $scope);
                                     //userdata analyzing completed, flush the current userdata
-                                    lessonSandbox.flushUserdata(lessonData.id,$routeParams.cid);
+                                    lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
 
                                     //lesson summary page
                                     $scope.hasFinalQuiz = (typeof lessonUserdata.summary.correct_count != "undefined");
@@ -638,15 +642,15 @@ angular.module('SunExercise.directives', [])
                     $scope.problems = activityData.problems.slice(currProblem);
                     $scope.problemIndex = currProblem;
 
-                     for(var i=0;i<$scope.problems.length;i++) {
+                    for (var i = 0; i < $scope.problems.length; i++) {
                         var mIndex = (currProblem + i + 1) + '.';
-                        if($scope.problems[i].type == "multichoice") {
+                        if ($scope.problems[i].type == "multichoice") {
                             mIndex += '(多选题)';
                         }
                         mIndex += ' ';
-                        $scope.problems[i].body = mIndex +$scope.problems[i].body;
+                        $scope.problems[i].body = mIndex + $scope.problems[i].body;
                     }
-                                       
+
                     //update the progress bar
                     $scope.progressWidth = (currProblem + 1) * 100 / activityData.problems.length;
                 }
@@ -1120,7 +1124,7 @@ angular.module('SunExercise.directives', [])
                     //some logic after student choose an option
                     //$scope.lastChecked = -1;
                     var singleChoice = function (choiceId, choiceIndex) {
-                        if($scope.madeChoice) {
+                        if ($scope.madeChoice) {
                             return;
                         }
 
@@ -1131,15 +1135,15 @@ angular.module('SunExercise.directives', [])
                         $scope.submitAnswer();
 
                         /*if (!$scope.submitted) {
-                            //change submit icon
-                            $scope.submitIcon = "submit";
-                            if ($scope.lastChecked != -1) {
-                                $scope.checked[$scope.lastChecked] = "default";
-                            }
-                            $scope.checked[choiceIndex] = "choose";
-                            $scope.lastChecked = choiceIndex;
-                            $scope.answer[currProblem.id] = choiceId;
-                        }*/
+                         //change submit icon
+                         $scope.submitIcon = "submit";
+                         if ($scope.lastChecked != -1) {
+                         $scope.checked[$scope.lastChecked] = "default";
+                         }
+                         $scope.checked[choiceIndex] = "choose";
+                         $scope.lastChecked = choiceIndex;
+                         $scope.answer[currProblem.id] = choiceId;
+                         }*/
 
                     };
 
@@ -1498,49 +1502,49 @@ angular.module('SunExercise.directives', [])
             }
         };
     })
-    .directive("comb", function(SandboxProvider, $http, $templateCache, $compile, $routeParams) {
+    .directive("comb", function (SandboxProvider, $http, $templateCache, $compile, $routeParams) {
         var combSandbox = SandboxProvider.getSandbox();
         return {
             restrict: "E",
             templateUrl: 'resources/partials/comb.html',
             link: function ($scope, $element) {
                 //$scope.isFirst = false;
-                var sortForLessons = function(lessons) {
-                   for(var out=1; out<lessons.length; out++) {
-                       var tmp = lessons[out];
-                       var tmpSeq = tmp.seq;
-                       var inner = out;
-                       while((lessons[inner-1]).seq > tmpSeq) {
-                           lessons[inner] = lessons[inner-1];
-                           --inner;
-                           if(inner <= 0){
+                var sortForLessons = function (lessons) {
+                    for (var out = 1; out < lessons.length; out++) {
+                        var tmp = lessons[out];
+                        var tmpSeq = tmp.seq;
+                        var inner = out;
+                        while ((lessons[inner - 1]).seq > tmpSeq) {
+                            lessons[inner] = lessons[inner - 1];
+                            --inner;
+                            if (inner <= 0) {
                                 break;
-                           }
-                       }
-                       lessons[inner] = tmp;
-                   }
-                };             
+                            }
+                        }
+                        lessons[inner] = tmp;
+                    }
+                };
 
-                var data = combSandbox.getChapterMaterial($routeParams.cid); 
-                if(data) {
+                var data = combSandbox.getChapterMaterial($routeParams.cid);
+                if (data) {
                     $scope.lessons = data.lessons;
                     $scope.count = $scope.lessons.length;
 
                     var lessonMap = {};
-                    data.lessons.forEach(function(lesson, index, arr) {
+                    data.lessons.forEach(function (lesson, index, arr) {
                         var requirements = lesson.requirements;
-                        if(requirements){
+                        if (requirements) {
                             var key = requirements[0];
                             var itemsArray = lessonMap[key];
-                            if(itemsArray) {
+                            if (itemsArray) {
                                 itemsArray.push(lesson);
                             } else {
                                 lessonMap[key] = [];
                                 lessonMap[key].push(lesson);
-                            } 
+                            }
                         } else {
                             //enter_lesson's level
-                            if(!lessonMap.header) {
+                            if (!lessonMap.header) {
                                 lessonMap.header = [];
                                 lessonMap.header.push(lesson);
                             } else {
@@ -1549,34 +1553,34 @@ angular.module('SunExercise.directives', [])
                         }
                     });
 
-                angular.forEach(lessonMap, function(lessonArray, lessonId) {
-                    sortForLessons(lessonArray);
-                });
+                    angular.forEach(lessonMap, function (lessonArray, lessonId) {
+                        sortForLessons(lessonArray);
+                    });
 
-                $scope.title = lessonMap.header[0].title;
-                $scope.allLessons = [];
-                var mlength = Object.keys(lessonMap).length;
-                var count = 1;
-                var firsrtLessons = lessonMap.header;
-                console.log('first: '+firsrtLessons[0].title);
-                $scope.allLessons[0] = firsrtLessons;
+                    $scope.title = lessonMap.header[0].title;
+                    $scope.allLessons = [];
+                    var mlength = Object.keys(lessonMap).length;
+                    var count = 1;
+                    var firsrtLessons = lessonMap.header;
+                    console.log('first: ' + firsrtLessons[0].title);
+                    $scope.allLessons[0] = firsrtLessons;
 
-                var enter_lesson = data.enter_lesson;  
+                    var enter_lesson = data.enter_lesson;
 
-                (function getInitArray(lessons) {
-                    if(count >= mlength) return;
-                    var key = lessons[0].id;
-                    var targetLessons = lessonMap[key];
-                    $scope.allLessons[count] = targetLessons;
-                    count++;
-                    getInitArray(targetLessons);
-                  })(firsrtLessons);
+                    (function getInitArray(lessons) {
+                        if (count >= mlength) return;
+                        var key = lessons[0].id;
+                        var targetLessons = lessonMap[key];
+                        $scope.allLessons[count] = targetLessons;
+                        count++;
+                        getInitArray(targetLessons);
+                    })(firsrtLessons);
 
-                  console.log('result='+$scope.allLessons.length);
-            }  
-            $compile($element.contents())($scope);
-          }
-       }
+                    console.log('result=' + $scope.allLessons.length);
+                }
+                $compile($element.contents())($scope);
+            }
+        }
     })
     .provider('Modernizr', function () {
 

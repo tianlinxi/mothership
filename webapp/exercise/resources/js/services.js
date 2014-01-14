@@ -67,6 +67,9 @@ angular.module('SunExercise.services', [])
                 case "getUserInfo" :
                     return HOST + "/userdata/exercise/user_info";
 
+                case "getMe" :
+                    return HOST + "/users/me";
+
                 case "postUserInfoUserdata" :
                     return HOST + "/userdata/exercise/user_info";
             }
@@ -176,6 +179,7 @@ angular.module('SunExercise.services', [])
         var userinfoMaterial = DataProvider.userinfoMaterial;
         var Material = DataProvider.Material;
         var materialMap = DataProvider.materialMap;
+        var me;
 
         var getRoot = function () {
             var deferred = $q.defer();
@@ -308,7 +312,7 @@ angular.module('SunExercise.services', [])
                 deferred.reject(err);
             }, function (progressData) {
                 deferred.notify(progressData);
-            })
+            });
 
             return getChapterPromise;
         }
@@ -477,7 +481,20 @@ angular.module('SunExercise.services', [])
             getAchievementsMaterial: getAchievementsMaterial,
             loadAchievementsResources: loadAchievementsResources,
             getIncompleteGlobalBadges: getIncompleteGlobalBadges,
-            getMaterial: getMaterial
+            getMaterial: getMaterial,
+            fetchMe: function (cb) {
+                var promise = $http.get(APIProvider.getAPI("getMe"))
+                    .success(function (userInfo) {
+                        if (cb) cb(null, userInfo);
+                    })
+                    .error(function (err) {
+                        if (cb) cb(err);
+                    });
+                return promise;
+            },
+            getMe: function () {
+                return me;
+            }
         }
     })
 
@@ -575,7 +592,7 @@ angular.module('SunExercise.services', [])
                 }
             } else if ((activityData.type === "quiz") && (typeof userdataMap[activityData.problems[0].id] == "undefined")) {
                 for (var i = 0; i < activityData.problems.length; i++) {
-                    if(!userdataMap[activityId].problems){
+                    if (!userdataMap[activityId].problems) {
                         userdataMap[activityId].problems = {};
                     }
 
@@ -751,6 +768,10 @@ angular.module('SunExercise.services', [])
     .factory("SandboxProvider", function (MaterialProvider, UserdataProvider, GraderProvider, ExerciseService) {
 
         function Sandbox() {
+
+            Sandbox.prototype.getMe = function (cb) {
+                return MaterialProvider.fetchMe(cb);
+            }
 
             Sandbox.prototype.getRootMaterial = function () {
                 return MaterialProvider.getRootMaterial();
