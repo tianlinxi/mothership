@@ -25,7 +25,7 @@ angular.module("SunExercise", ['SunExercise.controllers', 'SunExercise.directive
             $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
                 if (previous) {
                     if (temp == current.templateUrl && $rootScope.isBack) {
-                        window.location = "/";
+                        window.location = "/webapp/exercise";
                         return;
                     }
                     temp = previous.templateUrl;
