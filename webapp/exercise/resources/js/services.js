@@ -770,6 +770,10 @@ angular.module('SunExercise.services', [])
         function Sandbox() {
 
             Sandbox.prototype.getMe = function (cb) {
+                return MaterialProvider.getMe(cb);
+            }
+
+            Sandbox.prototype.fetchMe = function (cb) {
                 return MaterialProvider.fetchMe(cb);
             }
 
