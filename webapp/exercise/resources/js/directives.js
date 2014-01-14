@@ -387,6 +387,7 @@ angular.module('SunExercise.directives', [])
                         }
                     }
                     $scope.reviewActivity = function (lessonId, activityId) {
+                        $rootScope.isBack = false;
                         $('#lessonModal-' + lessonData.id).modal('hide');
                         $('.modal-backdrop').remove();
 
