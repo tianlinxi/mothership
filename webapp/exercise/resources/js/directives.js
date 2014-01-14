@@ -1308,7 +1308,7 @@ angular.module('SunExercise.directives', [])
         };
     })
 
-    .directive("achievements", function (SandboxProvider, $q, $location) {
+    .directive("achievements", function (SandboxProvider, $q, $location, $rootScope) {
 
         var achievementSandbox = SandboxProvider.getSandbox();
 
