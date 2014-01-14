@@ -1584,6 +1584,11 @@ angular.module('SunExercise.directives', [])
                         var targetLessons = lessonMap[key];
                         $scope.allLessons[count] = targetLessons;
                         count++;
+                        if(!targetLessons) {
+                            console.log('No Lessons...........key='+key);
+                        }else{
+                            console.log('Have Lessons.......key='+key);
+                        }
                         getInitArray(targetLessons);
                     })(firsrtLessons);
 
