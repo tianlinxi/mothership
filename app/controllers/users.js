@@ -128,7 +128,6 @@ exports.me = function (req, res) {
 };
 
 exports.dispatch = function (req, res) {
-    console.log('ha');
     if (req.user) {
         if (req.user.usergroup != "teacher") {
             if (req.user.isProfileFullfill()) {
@@ -137,7 +136,7 @@ exports.dispatch = function (req, res) {
                 res.redirect("/webapp/me/bootstrap.html")
             }
         } else {
-            res.redirect("/webapp/me/index.html");
+            res.redirect("/webapp/exercise");
         }
     } else {
         res.redirect('/');
