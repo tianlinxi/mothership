@@ -118,7 +118,7 @@ angular.module('SunExercise.directives', [])
                     $location.path("/webapp/exercise");
                     return;
                 }
-                $scope.title = chapterData.title;
+                $scope.chapterTitle = chapterData.title;
                 $scope.lessons = chapterData.lessons;
                 var lessonState = {};
                 for (var i = 0; i < chapterData.lessons.length; i++) {
@@ -1624,15 +1624,33 @@ angular.module('SunExercise.directives', [])
 
                     var enter_lesson = data.enter_lesson;
 
+
                     (function getInitArray(lessons) {
                         if (count >= mlength) return;
                         var key = lessons[0].id;
                         var targetLessons = lessonMap[key];
                         $scope.allLessons[count] = targetLessons;
                         count++;
+                        if(!targetLessons) {
+                            console.log('No Lessons...........key='+key);
+                        }else{
+                            console.log('Have Lessons.......key='+key);
+                        }
                         getInitArray(targetLessons);
                     })(firsrtLessons);
 
+                    var flag = $scope.allLessons.length-1;
+                    var lastLessons = $scope.allLessons[flag].splice(1);
+                    
+                    (function convertLessons(insertLessons) {
+                        if(flag <= 0) return;
+                        flag--;
+                        var newInsertLessons = $scope.allLessons[flag].splice(1);
+                        Array.prototype.push.apply($scope.allLessons[flag], insertLessons);
+                        convertLessons(newInsertLessons);
+                    })(lastLessons);
+
+                    //
                     console.log('result=' + $scope.allLessons.length);
                 }
                 $compile($element.contents())($scope);
