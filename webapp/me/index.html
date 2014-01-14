@@ -57,10 +57,13 @@
 
                 <div style="margin-top: 20px">
                     <h4>联系我们</h4>
-                    <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=231f780bc481464f5c573d2f3b6b499c1131ca1331c680fa267d00ebe7b6fc9e"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="提高班-老师交流群" title="提高班-老师交流群"></a>                </div>
+                    <a target="_blank"
+                       href="http://shang.qq.com/wpa/qunwpa?idkey=231f780bc481464f5c573d2f3b6b499c1131ca1331c680fa267d00ebe7b6fc9e"><img
+                            border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="提高班-老师交流群"
+                            title="提高班-老师交流群"></a></div>
 
                 <div style="margin-top: 20px">
-                    <button class="ladda-button btn btn-success btn-lg btn-block" ng-click="dispatch()">
+                    <button class="ladda-button btn btn-success btn-lg btn-block" ng-click="exercise()">
                         体验数学提高班
                     </button>
                     <button ng-click="signout()" class="ladda-button btn btn-link" ng-click="signout()">
@@ -106,8 +109,8 @@
                         location.reload();
                     });
         };
-        $scope.dispatch = function () {
-            window.location = "/dispatch";
+        $scope.exercise = function () {
+            window.location = "/webapp/exercise";
         }
 
         checklogin();

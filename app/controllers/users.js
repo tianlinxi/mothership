@@ -136,7 +136,7 @@ exports.dispatch = function (req, res) {
                 res.redirect("/webapp/me/bootstrap.html")
             }
         } else {
-            res.redirect("/webapp/exercise");
+            res.redirect("/webapp/me/index.html");
         }
     } else {
         res.redirect('/');
