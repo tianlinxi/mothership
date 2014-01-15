@@ -71,7 +71,7 @@ angular.module('SunExercise.directives', [])
                     $scope.enterChapter = function (chapterId) {
                         //Mixpanel
                         LearningRelated.enterChapter(Chapter.id,Chapter.title);
-                       // mixpanel.register({ChapterId:Chapter.id,ChapterTitle:Chapter.title});
+                        mixpanel.register({ChapterId:Chapter.id,ChapterTitle:Chapter.title});
 
                         $rootScope.isBack = false;
                         if ($scope.hasCached[chapterId]) {
@@ -184,8 +184,8 @@ angular.module('SunExercise.directives', [])
                 }
                 $scope.returnToSubject = function () {
                     //Mixpanel
-                   // mixpanel.unregister("ChapterId");
-                  //  mixpanel.unregister("ChapterTitle");
+                    Utils.unregisterSP(true,true,true);
+                    mixpanel.track("ReturnToSubject");
                     $rootScope.isBack = false;
                     $location.path('/subject/' + $routeParams.sid);
                 }
@@ -410,6 +410,7 @@ angular.module('SunExercise.directives', [])
                         $('.modal-backdrop').remove();
                         //Mixpanel
                         LearningRelated.enterLesson($scope.id,$scope.title/*,$scope.parentChapter.id,$scope.parentChapter.title*/);
+                        mixpanel.register({LessonId:$scope.id,LessonTitle:$scope.title});
 
                         if (typeof lessonUserdata.current_activity === "undefined") {
                             lessonUserdata.current_activity = lessonData.activities[0].id;
@@ -671,6 +672,7 @@ angular.module('SunExercise.directives', [])
                     $scope.problems = activityData.problems.slice(currProblem);
                     //Mixpanel
                     LearningRelated.enterQuiz(activityData.id,activityData.title);
+                    mixpanel.register({QuizId:activityData.id,QuizTitle:activityData.title});
                     $scope.problemIndex = currProblem;
 
                     for (var i = 0; i < $scope.problems.length; i++) {
@@ -691,6 +693,8 @@ angular.module('SunExercise.directives', [])
                     activityUserdata.start_time = Date.now();
                 })
                 $scope.pauseLearn = function () {
+                    //Mixpanel
+                    Utils.unregisterSP(false,false,true);
                     //send pause activity event to lesson directive
                     activitySandbox.sendEvent("pauseActivity", $scope);
                 }

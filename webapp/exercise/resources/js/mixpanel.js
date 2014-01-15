@@ -49,7 +49,7 @@
             mixpanel.track("FinishVideo",{VideoId:id, VideoTitle:title,VideoPlayedLength:length, VideoPlayedRatio:ratio});
         },
 
-        enterQuiz: function(id,title){
+        enterQuiz: function(id,title){ //should register quiz
             mixpanel.track("EnterQuiz",{QuizId:id, QuizTitle:title});
         },
 
@@ -62,17 +62,16 @@
                 UserAnswer:user_answer,
                 CorrectOrNot:correct_or_not, //boolean
                 HintOrNot:hint_or_not //boolean
-               // TimeSpent:time_spent
+                //TimeSpent:time_spent
             });
         },
 
-        /*quitQuiz: function(id,title,time_spent){
+        quitQuiz: function(id,title,time_spent){ //should unregister quiz
             mixpanel.track("QuitQuiz",{QuizId:id, QuizTitle:title, TimeSpent:time_spent});
-        },*/
+        },
 
-        finishQuiz: function(id,title,correctRatio){
+        finishQuiz: function(id,title,correctRatio){ //should unregister quiz
             mixpanel.track("FinishQuiz",{QuizId:id,QuizTitle:title,CorrectRatio:correctRatio});
-
         },
 
         finishLesson: function(lesson_id,lesson_title,/*parent_chapter_id,parent_chapter_title,*/pass_or_not){ //pass_or_not boolean
@@ -92,8 +91,22 @@
             }
         },
 
-        unregisterSP: function(something){
-            mixpanel.unregister(something);
+        unregisterSP: function(chapter,lesson,quiz){
+
+            if(chapter){
+                mixpanel.unregister("ChapterId");
+                mixpanel.unregister("ChapterTitle");
+            }
+
+            if(lesson){
+                mixpanel.unregister("LessonId");
+                mixpanel.unregister("LessonTitle");
+            }
+
+            if(quiz){
+                mixpanel.unregister("QuizId");
+                mixpanel.unregister("QuizTitle");
+            }
         }
     }
 
@@ -106,6 +119,8 @@
     /*function signIn(){
         UserRelated.login(UserRelated.setActive());
     }*/
+
+    // TODO : MUST UNREGISTER SUPER PROPERTIES WHEN CLICK X BUTTON ON THE UP-RIGHT CORNER!
 
 
 
