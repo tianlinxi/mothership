@@ -737,6 +737,11 @@ angular.module('SunExercise.directives', [])
                                         correctCount++;
                                     }
                                 }
+
+                                if(!activityUserdata.summary) {
+                                    activityUserdata.summary = {};
+                                }
+
                                 activityUserdata.summary['correct_count'] = correctCount;
                                 activityUserdata.summary['correct_percent'] = parseInt(correctCount * 100 / activityData.problems.length);
                                 //if the activity is final quiz, save the userdata to lessonSummary object
