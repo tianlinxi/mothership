@@ -31,17 +31,17 @@
         }
     }
 
-    var LearningRelated = {    // TODO: change data structure ?
+    var LearningRelated = {    // Property Names must be the same when come with parent-child relationship!!
 
         enterChapter: function(id,title){
             mixpanel.track("EnterChapter",{ChapterId:id, ChapterTitle:title});
         },
 
-        enterLesson: function(id,title){
-            mixpanel.track("EnterLesson",{LessonId:id, LessonTitle:title});
+        enterLesson: function(lesson_id,lesson_title,parent_chapter_id,parent_chapter_title){
+            mixpanel.track("EnterLesson",{LessonId:lesson_id, LessonTitle:lesson_title/*, ChapterId:parent_chapter_id, ChapterTitle:parent_chapter_title*/});
         },
 
-        enterVideo: function(id,title,length){
+        enterVideo: function(id,title,length,parent_lesson_id,parent_lesson_title,parent_chapter_id,parent_chapter_title){
             mixpanel.track("EnterVideo",{VideoId:id, VideoTitle:title,VideoLength:length});
         },
 
@@ -64,15 +64,37 @@
                 HintOrNot:hint_or_not //boolean
                // TimeSpent:time_spent
             });
-        }
-
-/*      quitQuiz: function(id,title,time_spent){
-            mixpanel.track("QuitQuiz",{QuizId:id, QuizTitle:title, TimeSpent:time_spent});
         },
 
-        finishLesson: function(id,title,pass_or_not){ //pass_or_not boolean
-            mixpanel.track("FinishLesson",{LessonId:id, LessonTitle:title, PassOrNot:pass_or_not});
-        }*/
+        /*quitQuiz: function(id,title,time_spent){
+            mixpanel.track("QuitQuiz",{QuizId:id, QuizTitle:title, TimeSpent:time_spent});
+        },*/
+
+        finishQuiz: function(id,title,correctRatio){
+            mixpanel.track("FinishQuiz",{QuizId:id,QuizTitle:title,CorrectRatio:correctRatio});
+
+        },
+
+        finishLesson: function(lesson_id,lesson_title,/*parent_chapter_id,parent_chapter_title,*/pass_or_not){ //pass_or_not boolean
+            mixpanel.track("FinishLesson",{LessonId:lesson_id, LessonTitle:lesson_title, /*ChapterId:parent_chapter_id, ChapterTitle:parent_chapter_title,*/ PassOrNot:pass_or_not});
+        }
+    }
+
+    var Utils = {
+        registerSP: {
+            register: function(p_id,p_title,id,title){
+                mixpanel.register({
+
+                })
+            },
+            register_once: function(id,title){
+
+            }
+        },
+
+        unregisterSP: function(something){
+            mixpanel.unregister(something);
+        }
     }
 
     //var BrowserRelated = {}
