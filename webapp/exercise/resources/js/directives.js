@@ -185,7 +185,6 @@ angular.module('SunExercise.directives', [])
                 $scope.returnToSubject = function () {
                     //Mixpanel
                     Utils.unregisterSP(true,true,true);
-                    mixpanel.track("ReturnToSubject");
                     $rootScope.isBack = false;
                     $location.path('/subject/' + $routeParams.sid);
                 }
