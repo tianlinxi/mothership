@@ -71,6 +71,7 @@ angular.module('SunExercise.directives', [])
                     $scope.enterChapter = function (chapterId) {
                         //Mixpanel
                         LearningRelated.enterChapter(Chapter.id,Chapter.title);
+                       // mixpanel.register({ChapterId:Chapter.id,ChapterTitle:Chapter.title});
 
                         $rootScope.isBack = false;
                         if ($scope.hasCached[chapterId]) {
@@ -182,6 +183,9 @@ angular.module('SunExercise.directives', [])
                     $("#lessonModal-" + id).modal("toggle");
                 }
                 $scope.returnToSubject = function () {
+                    //Mixpanel
+                   // mixpanel.unregister("ChapterId");
+                  //  mixpanel.unregister("ChapterTitle");
                     $rootScope.isBack = false;
                     $location.path('/subject/' + $routeParams.sid);
                 }
@@ -284,6 +288,7 @@ angular.module('SunExercise.directives', [])
         //console.log('hit');
         //create the lesson sandbox
         var lessonSandbox = SandboxProvider.getSandbox();
+        var ChapterData = lessonSandbox.getChapterMaterial($routeParams.cid,null);
 
         //every lesson has a fsm
         var FSM = StateMachine.create({
@@ -317,6 +322,9 @@ angular.module('SunExercise.directives', [])
 
                 var userinfoDataPromise = lessonSandbox.loadUserInfo();
                 var lessonMaterialPromise, lessonUserdataPromise;
+
+                $scope.parentChapter = ChapterData;
+
                 if (typeof $scope.obj != "undefined") {
                     $scope.lessonId = $scope.obj.lessonId;
                     $scope.isFirst = $scope.obj.isFirst;
@@ -401,7 +409,7 @@ angular.module('SunExercise.directives', [])
                         $('#lessonModal-' + id).modal('hide');
                         $('.modal-backdrop').remove();
                         //Mixpanel
-                        LearningRelated.enterLesson($scope.id,$scope.title);
+                        LearningRelated.enterLesson($scope.id,$scope.title/*,$scope.parentChapter.id,$scope.parentChapter.title*/);
 
                         if (typeof lessonUserdata.current_activity === "undefined") {
                             lessonUserdata.current_activity = lessonData.activities[0].id;
