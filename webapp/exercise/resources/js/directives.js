@@ -71,7 +71,6 @@ angular.module('SunExercise.directives', [])
                     $scope.enterChapter = function (chapterId) {
                         //Mixpanel
                         LearningRelated.enterChapter(Chapter.id,Chapter.title);
-                        mixpanel.register({ChapterId:Chapter.id,ChapterTitle:Chapter.title});
 
                         $rootScope.isBack = false;
                         if ($scope.hasCached[chapterId]) {
@@ -409,7 +408,6 @@ angular.module('SunExercise.directives', [])
                         $('.modal-backdrop').remove();
                         //Mixpanel
                         LearningRelated.enterLesson($scope.id,$scope.title/*,$scope.parentChapter.id,$scope.parentChapter.title*/);
-                        mixpanel.register({LessonId:$scope.id,LessonTitle:$scope.title});
 
                         if (typeof lessonUserdata.current_activity === "undefined") {
                             lessonUserdata.current_activity = lessonData.activities[0].id;
@@ -442,6 +440,7 @@ angular.module('SunExercise.directives', [])
 
                     //check global badges after each lesson is finished
                     $scope.$on("lesson.complete", function (event) {
+
                         var incompleteBadgesPromise = lessonSandbox.getIncompleteGlobalBadges(event);
                         incompleteBadgesPromise.then(function (globalBadges) {
                             var userDataToGrade = {
@@ -477,17 +476,20 @@ angular.module('SunExercise.directives', [])
                         if ((typeof lessonUserdata.summary.correct_percent == "undefined")) {
                             lessonUserdata.summary.correct_percent = 100;
                             lessonUserdata.is_complete = true;
-                        } else {
+                          } else {
                             if (typeof lessonData.pass_score != "undefined") {
                                 if (lessonSandbox.parseCompleteCondition(lessonData.pass_score, lessonUserdata.summary)) {
                                     lessonUserdata.is_complete = true;
+                                    //Mixpanel
                                 }
                             } else {
                                 lessonUserdata.is_complete = true;
+
                             }
                         }
 
                         if (args.should_transition) {
+
                             //give student star if qualified
                             if (typeof lessonUserdata.summary.correct_percent != "undefined") {
                                 // default star is 3
@@ -518,7 +520,7 @@ angular.module('SunExercise.directives', [])
                                     }
                                 }
                             }
-                            //send an event to check the global badges
+                           //send an event to check the global badges
                             lessonSandbox.sendEvent("lesson.complete", $scope);
                             //userdata analyzing completed, flush the current userdata
                             lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
@@ -531,7 +533,10 @@ angular.module('SunExercise.directives', [])
                                 ((lessonUserdata.summary.star == 2) ? " 获得 银杯" :
                                     ((lessonUserdata.summary.star == 3) ? " 获得 金杯" : null));
                             $scope.showLessonSummary = true;
+                            //Mixpanel
+                            LearningRelated.finishLesson($scope.id,$scope.title,$scope.lessonCup);
                         }
+
                     })
 
                     //iterate all the activities and add listeners
@@ -563,64 +568,72 @@ angular.module('SunExercise.directives', [])
                                 //set the current_activity to undefined so that the back button can operate as intended
                                 lessonUserdata.current_activity = undefined;
 
-                                if (args.should_transition) {
-                                    //check if the student has completed the condition to complete the lesson
-                                    if ((typeof lessonUserdata.summary.correct_percent == "undefined")) {
-                                        lessonUserdata.summary.correct_percent = 100;
-                                        lessonUserdata.is_complete = true;
-                                    } else {
-                                        if (typeof lessonData.pass_score != "undefined") {
-                                            if (lessonSandbox.parseCompleteCondition(lessonData.pass_score, lessonUserdata.summary)) {
-                                                lessonUserdata.is_complete = true;
-                                            }
-                                        } else {
-                                            lessonUserdata.is_complete = true;
-                                        }
-                                    }
+                                 if (args.should_transition) {
+                                     //check if the student has completed the condition to complete the lesson
+                                     if ((typeof lessonUserdata.summary.correct_percent == "undefined")) {
+                                         lessonUserdata.summary.correct_percent = 100;
+                                         lessonUserdata.is_complete = true;
+                                     } else {
+                                         if (typeof lessonData.pass_score != "undefined") {
+                                             if (lessonSandbox.parseCompleteCondition(lessonData.pass_score, lessonUserdata.summary)) {
+                                                 lessonUserdata.is_complete = true;
 
-                                    //give student star if qualified
-                                    if (typeof lessonUserdata.summary.correct_percent != "undefined") {
-                                        if ((typeof lessonData.star3 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star3)) {
-                                            lessonUserdata.summary.star = 3;
-                                        } else if ((typeof lessonData.star2 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star2)) {
-                                            lessonUserdata.summary.star = 2;
-                                        } else if ((typeof lessonData.star2 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star1)) {
-                                            lessonUserdata.summary.star = 1;
-                                        }
-                                    }
-                                    //give award videos and badges if qualified
-                                    if ((lessonUserdata.is_complete) && (typeof lessonData.achievements != "undefined")) {
-                                        for (var i = 0; i < lessonData.achievements.length; i++) {
-                                            //award video logic
-                                            if (lessonData.achievements[i].type == "award") {
-                                                //check if the student has already got the award video
-                                                if (typeof userinfoData.achievements.awards[lessonData.achievements[i].id] == "undefined") {
-                                                    //parse the award condition
-                                                    if ((typeof lessonUserdata.summary.correct_count == "undefined") ?
-                                                        (lessonSandbox.conditionParser(lessonData.achievements[i].condition, Infinity, 100)) :
-                                                        (lessonSandbox.conditionParser(lessonData.achievements[i].condition,
-                                                            lessonUserdata.summary.correct_count, lessonUserdata.summary.correct_percent))) {
-                                                        lessonSandbox.addAchievements("awards", lessonData.achievements[i]);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    //send an event to check the global badges
-                                    lessonSandbox.sendEvent("lesson.complete", $scope);
-                                    //userdata analyzing completed, flush the current userdata
-                                    lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
+                                             }
+                                         } else {
+                                             lessonUserdata.is_complete = true;
+                                         }
+                                     }
 
-                                    //lesson summary page
-                                    $scope.hasFinalQuiz = (typeof lessonUserdata.summary.correct_count != "undefined");
-                                    $scope.lessonCorrectPercent = lessonUserdata.summary.correct_percent;
-                                    $scope.lessonStar = (typeof lessonUserdata.summary.star != "undefined") ?
-                                        lessonUserdata.summary.star : 0;
-                                    $scope.lessonCup = (lessonUserdata.summary.star == 1) ? " 获得 铜杯" :
-                                        ((lessonUserdata.summary.star == 2) ? " 获得 银杯" :
-                                            ((lessonUserdata.summary.star == 3) ? " 获得 金杯" : null));
-                                    $scope.showLessonSummary = true;
-                                }
+
+
+
+
+
+
+                                     //give student star if qualified
+                                     if (typeof lessonUserdata.summary.correct_percent != "undefined") {
+                                         if ((typeof lessonData.star3 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star3)) {
+                                             lessonUserdata.summary.star = 3;
+                                         } else if ((typeof lessonData.star2 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star2)) {
+                                             lessonUserdata.summary.star = 2;
+                                         } else if ((typeof lessonData.star2 == "undefined") || (lessonUserdata.summary.correct_percent >= lessonData.star1)) {
+                                             lessonUserdata.summary.star = 1;
+                                         }
+                                     }
+                                     //give award videos and badges if qualified
+                                     if ((lessonUserdata.is_complete) && (typeof lessonData.achievements != "undefined")) {
+                                         for (var i = 0; i < lessonData.achievements.length; i++) {
+                                             //award video logic
+                                             if (lessonData.achievements[i].type == "award") {
+                                                 //check if the student has already got the award video
+                                                 if (typeof userinfoData.achievements.awards[lessonData.achievements[i].id] == "undefined") {
+                                                     //parse the award condition
+                                                     if ((typeof lessonUserdata.summary.correct_count == "undefined") ?
+                                                         (lessonSandbox.conditionParser(lessonData.achievements[i].condition, Infinity, 100)) :
+                                                         (lessonSandbox.conditionParser(lessonData.achievements[i].condition,
+                                                             lessonUserdata.summary.correct_count, lessonUserdata.summary.correct_percent))) {
+                                                         lessonSandbox.addAchievements("awards", lessonData.achievements[i]);
+                                                     }
+                                                 }
+                                             }
+                                         }
+                                     }
+                                     //send an event to check the global badges
+                                     lessonSandbox.sendEvent("lesson.complete", $scope);
+                                     //userdata analyzing completed, flush the current userdata
+                                     lessonSandbox.flushUserdata(lessonData.id, $routeParams.cid);
+
+                                     //lesson summary page
+                                     $scope.hasFinalQuiz = (typeof lessonUserdata.summary.correct_count != "undefined");
+                                     $scope.lessonCorrectPercent = lessonUserdata.summary.correct_percent;
+                                     $scope.lessonStar = (typeof lessonUserdata.summary.star != "undefined") ?
+                                         lessonUserdata.summary.star : 0;
+                                     $scope.lessonCup = (lessonUserdata.summary.star == 1) ? " 获得 铜杯" :
+                                         ((lessonUserdata.summary.star == 2) ? " 获得 银杯" :
+                                             ((lessonUserdata.summary.star == 3) ? " 获得 金杯" : null));
+                                     $scope.showLessonSummary = true;
+
+                                 }
                             }
                         })
                     })
@@ -671,7 +684,6 @@ angular.module('SunExercise.directives', [])
                     $scope.problems = activityData.problems.slice(currProblem);
                     //Mixpanel
                     LearningRelated.enterQuiz(activityData.id,activityData.title);
-                    mixpanel.register({QuizId:activityData.id,QuizTitle:activityData.title});
                     $scope.problemIndex = currProblem;
 
                     for (var i = 0; i < $scope.problems.length; i++) {
@@ -693,7 +705,7 @@ angular.module('SunExercise.directives', [])
                 })
                 $scope.pauseLearn = function () {
                     //Mixpanel
-                    Utils.unregisterSP(false,false,true);
+                    Utils.unregisterSP(false,true,true);
                     //send pause activity event to lesson directive
                     activitySandbox.sendEvent("pauseActivity", $scope);
                 }
@@ -923,7 +935,7 @@ angular.module('SunExercise.directives', [])
                     if (!document.webkitIsFullScreen) {
                         currentTime = video.currentTime;
                         //Mixpanel
-                        LearningRelated.finishVideo($attrs.src,activityData.title,currentTime,computeRatio(currentTime/video.duration));
+                        LearningRelated.finishVideo($attrs.src,activityData.title,video.duration,currentTime,computeRatio(currentTime/video.duration));
                         video.pause();
                         $scope.$apply(function () {
                             $scope.playButtonMsg = "播放视频";
@@ -952,7 +964,7 @@ angular.module('SunExercise.directives', [])
                 $scope.playButtonMsg = "播放视频";
                 $scope.playVideo = function () {
                     //Mixpanel
-                    LearningRelated.enterVideo($attrs.src,activityData.title,video.duration);
+                   // LearningRelated.enterVideo($attrs.src,activityData.title,video.duration);
                     if (video.paused == true) {
                         $scope.playButtonMsg = "暂停播放";
                         //send the activityStart event to activity to record the start_time

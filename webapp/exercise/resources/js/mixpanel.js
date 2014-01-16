@@ -33,24 +33,29 @@
 
     var LearningRelated = {    // Property Names must be the same when come with parent-child relationship!!
 
-        enterChapter: function(id,title){
-            mixpanel.track("EnterChapter",{ChapterId:id, ChapterTitle:title});
+        enterChapter: function(chapter_id,chapter_title){
+            mixpanel.track("EnterChapter",{ChapterId:chapter_id, ChapterTitle:chapter_title});
+            mixpanel.register({ChapterId:chapter_id,ChapterTitle:chapter_title});
         },
 
-        enterLesson: function(lesson_id,lesson_title,parent_chapter_id,parent_chapter_title){
-            mixpanel.track("EnterLesson",{LessonId:lesson_id, LessonTitle:lesson_title/*, ChapterId:parent_chapter_id, ChapterTitle:parent_chapter_title*/});
+        enterLesson: function(lesson_id,lesson_title){
+            mixpanel.track("EnterLesson",{LessonId:lesson_id, LessonTitle:lesson_title});
+            mixpanel.register({LessonId:lesson_id,LessonTitle:lesson_title});
         },
 
+/*
         enterVideo: function(id,title,length,parent_lesson_id,parent_lesson_title,parent_chapter_id,parent_chapter_title){
             mixpanel.track("EnterVideo",{VideoId:id, VideoTitle:title,VideoLength:length});
         },
+*/
 
-        finishVideo: function(id,title,length,ratio){
-            mixpanel.track("FinishVideo",{VideoId:id, VideoTitle:title,VideoPlayedLength:length, VideoPlayedRatio:ratio});
+        finishVideo: function(id,title,length,played_length,played_ratio){
+            mixpanel.track("FinishVideo",{VideoId:id, VideoTitle:title, VideoLength:length, VideoPlayedLength:played_length, VideoPlayedRatio:played_ratio});
         },
 
-        enterQuiz: function(id,title){ //should register quiz
-            mixpanel.track("EnterQuiz",{QuizId:id, QuizTitle:title});
+        enterQuiz: function(quiz_id,quiz_title){
+            mixpanel.track("EnterQuiz",{QuizId:quiz_id, QuizTitle:quiz_title});
+            mixpanel.register({QuizId:quiz_id,QuizTitle:quiz_title});
         },
 
         finishProblem: function(id,body,type,correct_answer,user_answer,correct_or_not,hint_or_not/*,time_spent*/){
@@ -66,31 +71,22 @@
             });
         },
 
-        quitQuiz: function(id,title,time_spent){ //should unregister quiz
-            mixpanel.track("QuitQuiz",{QuizId:id, QuizTitle:title, TimeSpent:time_spent});
+        //quitQuiz: function(id,title,time_spent){ //should unregister quiz
+        //    mixpanel.track("QuitQuiz",{QuizId:id, QuizTitle:title, TimeSpent:time_spent});
+        //},
+
+        finishQuiz: function(quiz_id,quiz_title,correctRatio,time_spent){
+            mixpanel.track("FinishQuiz",{QuizId:quiz_id,QuizTitle:quiz_title,CorrectRatio:correctRatio,TimeSpent:time_spent});
+            Utils.unregisterSP(false,false,true); //unregister quiz
         },
 
-        finishQuiz: function(id,title,correctRatio){ //should unregister quiz
-            mixpanel.track("FinishQuiz",{QuizId:id,QuizTitle:title,CorrectRatio:correctRatio});
-        },
-
-        finishLesson: function(lesson_id,lesson_title,/*parent_chapter_id,parent_chapter_title,*/pass_or_not){ //pass_or_not boolean
-            mixpanel.track("FinishLesson",{LessonId:lesson_id, LessonTitle:lesson_title, /*ChapterId:parent_chapter_id, ChapterTitle:parent_chapter_title,*/ PassOrNot:pass_or_not});
+        finishLesson: function(lesson_id,lesson_title,star){ //pass_or_not boolean
+            mixpanel.track("FinishLesson",{LessonId:lesson_id, LessonTitle:lesson_title, Star:star});
+            Utils.unregisterSP(false,true,true); //unregister lesson
         }
     }
 
     var Utils = {
-        registerSP: {
-            register: function(p_id,p_title,id,title){
-                mixpanel.register({
-
-                })
-            },
-            register_once: function(id,title){
-
-            }
-        },
-
         unregisterSP: function(chapter,lesson,quiz){
 
             if(chapter){
@@ -119,9 +115,6 @@
     /*function signIn(){
         UserRelated.login(UserRelated.setActive());
     }*/
-
-    // TODO : MUST UNREGISTER SUPER PROPERTIES WHEN CLICK X BUTTON ON THE UP-RIGHT CORNER!
-
 
 
 
