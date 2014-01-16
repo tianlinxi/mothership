@@ -740,6 +740,7 @@ angular.module('SunExercise.directives', [])
                                 //record the duration the student spends to finish the activity
                                 var stopTime = Date.now();
                                 var duration = stopTime - activityUserdata.start_time;
+
                                 if (typeof activityUserdata.duration == "undefined") {
                                     activityUserdata.end_time = stopTime;
                                     activityUserdata.duration = duration;
@@ -759,6 +760,10 @@ angular.module('SunExercise.directives', [])
 
                                 activityUserdata.summary['correct_count'] = correctCount;
                                 activityUserdata.summary['correct_percent'] = parseInt(correctCount * 100 / activityData.problems.length);
+
+                                //Mixpanel
+                                LearningRelated.finishQuiz($scope.activityId,$scope.activityTitle,activityUserdata.summary['correct_percent']+"%",duration/1000);
+
                                 //if the activity is final quiz, save the userdata to lessonSummary object
                                 var lessonSummary = {};
                                 if ((typeof activityData.is_final !== "undefined") && (activityData.is_final)) {
@@ -1349,18 +1354,19 @@ angular.module('SunExercise.directives', [])
                         }
 
                         //problemSandbox.sendEvent("showAnswerBeforeContinue", $scope);
-                        problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: false});
+                       // problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: false});
                     } else {
                         //send problem complete event to activity directive
-                        problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: true});
+                      //  problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: true});
                     }
-                    LearningRelated.finishProblem(currProblem.id,currProblem.body,currProblem.type, $scope.correct_answer_body[currProblem.id],
-                        $scope.user_answer_body[currProblem.id], problemUserdata.is_correct,problemUserdata.is_hint_checked/*,(problemUserdata.submit_time - problemUserdata.enter_time)/1000*/);
+
                 }
 
                 //continue button if show_answer=true
                 $scope.continueProblem = function () {
                     //send problem complete event to activity directive
+                    LearningRelated.finishProblem(currProblem.id,currProblem.body,currProblem.type, $scope.correct_answer_body[currProblem.id],
+                        $scope.user_answer_body[currProblem.id], problemUserdata.is_correct,problemUserdata.is_hint_checked);
                     problemSandbox.sendEvent('problemComplete_' + currProblem.id, $scope, {should_transition: true});
                 }
             }

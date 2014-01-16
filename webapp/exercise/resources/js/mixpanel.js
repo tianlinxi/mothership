@@ -31,7 +31,7 @@
         }
     }
 
-    var LearningRelated = {    // Property Names must be the same when come with parent-child relationship!!
+    var LearningRelated = {
 
         enterChapter: function(chapter_id,chapter_title){
             mixpanel.track("EnterChapter",{ChapterId:chapter_id, ChapterTitle:chapter_title});
@@ -50,7 +50,7 @@
 */
 
         finishVideo: function(id,title,length,played_length,played_ratio){
-            mixpanel.track("FinishVideo",{VideoId:id, VideoTitle:title, VideoLength:length, VideoPlayedLength:played_length, VideoPlayedRatio:played_ratio});
+            mixpanel.track("FinishVideo",{VideoId:id, VideoTitle:title, VideoLength:Math.floor(length), VideoPlayedLength:Math.floor(played_length), VideoPlayedRatio:played_ratio});
         },
 
         enterQuiz: function(quiz_id,quiz_title){
@@ -58,7 +58,7 @@
             mixpanel.register({QuizId:quiz_id,QuizTitle:quiz_title});
         },
 
-        finishProblem: function(id,body,type,correct_answer,user_answer,correct_or_not,hint_or_not/*,time_spent*/){
+        finishProblem: function(id,body,type,correct_answer,user_answer,correct_or_not,hint_or_not){
             mixpanel.track("FinishProblem",{
                 ProblemId:id,
                 ProblemBody:body,
@@ -67,7 +67,6 @@
                 UserAnswer:user_answer,
                 CorrectOrNot:correct_or_not, //boolean
                 HintOrNot:hint_or_not //boolean
-                //TimeSpent:time_spent
             });
         },
 
@@ -76,11 +75,11 @@
         //},
 
         finishQuiz: function(quiz_id,quiz_title,correctRatio,time_spent){
-            mixpanel.track("FinishQuiz",{QuizId:quiz_id,QuizTitle:quiz_title,CorrectRatio:correctRatio,TimeSpent:time_spent});
+            mixpanel.track("FinishQuiz",{QuizId:quiz_id,QuizTitle:quiz_title,CorrectRatio:correctRatio,TimeSpent:Math.floor(time_spent)});
             Utils.unregisterSP(false,false,true); //unregister quiz
         },
 
-        finishLesson: function(lesson_id,lesson_title,star){ //pass_or_not boolean
+        finishLesson: function(lesson_id,lesson_title,star){
             mixpanel.track("FinishLesson",{LessonId:lesson_id, LessonTitle:lesson_title, Star:star});
             Utils.unregisterSP(false,true,true); //unregister lesson
         }
