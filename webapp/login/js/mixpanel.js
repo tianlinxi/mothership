@@ -87,6 +87,17 @@
 
     //var BrowserRelated = {}
 
+    var Utils = {
+        unregisterSP: function(){
+            mixpanel.unregister("ChapterId");
+            mixpanel.unregister("ChapterTitle");
+            mixpanel.unregister("LessonId");
+            mixpanel.unregister("LessonTitle");
+            mixpanel.unregister("QuizId");
+            mixpanel.unregister("QuizTitle");
+        }
+    }
+
     function initMixpanel(id,user_name,name,user_group){
         UserRelated.identifyId(id,UserRelated.registerSP(id,user_name,name,user_group));
     }
