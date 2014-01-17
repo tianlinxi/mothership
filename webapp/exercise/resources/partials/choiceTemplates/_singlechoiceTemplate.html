@@ -8,9 +8,9 @@
             <span mathjax-bind="body"></span><br>
         </div>
 
-        <div ng-repeat='choice in problem.choices' class="col-md-{{ colNum }}" choices>
-            <div id='problem{{$parent.$index}}_choice{{$index}}'
-                 class="choice-layout-{{ layout }}-state-{{ checked[$index] }}"
+        <div ng-repeat='choice in problem.choices'  ng-mouseenter="isHover = true" ng-mouseleave="isHover = false"  class="col-md-{{ colNum }}" choices>
+            <div id='problem{{$parent.$index}}_choice{{$index}}' ng-mouseenter="isHover=true" ng-mouseleave="isHover=false"
+                 class="choice-layout-{{ layout }}-state-{{ checked[$index] }} choice-hover-{{isHover}}-{{!madeChoice}}"
                  fast-click='chooseOption(choice.id, $index)'>
                 {{ calcChoiceNum($index) }}&nbsp;&nbsp;
                 <div class="choice-content"

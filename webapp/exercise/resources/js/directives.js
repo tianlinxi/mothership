@@ -1122,6 +1122,8 @@ angular.module('SunExercise.directives', [])
                 var problemUserdata = problemSandbox.getUserdata(currProblem.id);
                 var parentActivityData = problemSandbox.getParentActivityData(currProblem.parent_id);
 
+                //var $scoppe.isHover = false;
+
                 //render dynamic templateUrl
                 var templateUrl = 'resources/partials/choiceTemplates/_' + currProblem.type + 'Template.html';
                 $http.get(templateUrl, {cache: $templateCache}).success(function (contents) {

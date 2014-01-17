@@ -64,6 +64,9 @@ ximage {
   max-height: 100%;
   max-width: 100%;
 }
+
+
+
 .choice-layout-list-state-default {
   background-color: #ffffff;
   margin: 0px 0px 15px 0px;
@@ -87,6 +90,15 @@ ximage {
   margin: 0px 0px 15px 0px;
   padding: 15px 0px 15px 15px;
 }
+
+.choice-hover-true-true {
+  background-color: #bbd8e9;
+  color: white;
+  margin: 0px 0px 15px 0px;
+  padding: 15px 0px 15px 15px;
+}
+
+
 .choice-layout-card-state-default {
   background-color: #ffffff;
   width: 100%;
@@ -137,6 +149,7 @@ ximage {
 .choice-content {
   display: inline-block;
 }
+
 .singlefilling-text-container {
   padding-left: 15px;
 }
