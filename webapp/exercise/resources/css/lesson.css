@@ -1,12 +1,12 @@
 .lesson-button-container-false {
-    width: 175px;
+    width: 200px;
     height: 132px;
     padding-left: 8px;
     padding-right: 8px;
     margin-top: 20px;
 }
 .lesson-button-container-true {
-    width: 350px;
+    width: 250px;
     height: 132px;
     padding-left: 8px;
     padding-right: 8px;
@@ -32,6 +32,7 @@
 }
 
 .lesson-button-icon-star3 {
+    border-radius: 6px 6px 0 0;
     background-color: #ffcd5a;
     height: 72px;
     text-align: center;
@@ -39,6 +40,7 @@
 }
 
 .lesson-button-icon-star2 {
+    border-radius: 6px 6px 0 0;
     background-color: #ccd4d4;
     height: 72px;
     text-align: center;
@@ -50,6 +52,7 @@
 }
 
 .lesson-button-icon-star1 {
+    border-radius: 6px 6px 0 0;
     background-color: #c27d57;
     height: 72px;
     text-align: center;
@@ -87,6 +90,7 @@
 }
 
 .lesson-button-title {
+    border-radius: 0 0 6px 6px;
     display: block;
     padding: 5px;
     height: 60px;
