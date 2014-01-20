@@ -21,7 +21,7 @@
                     <span class="lesson-title font-size-big">{{ title }}</span>
                 </div>
                 <div class="lesson-body-enter" ng-show="startLesson">
-                    <span>{{ summary }}</span>
+                    <div ng-bind-html-unsafe="lesson.summary"></div>
                 </div>
                 <div class="lesson-body-review" ng-show="reviewLesson">
                     <!--<span>已经完成啦</span><br><br>
