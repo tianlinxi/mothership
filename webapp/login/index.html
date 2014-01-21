@@ -89,13 +89,14 @@
                     </button>
                 </div>
             </div>
-            <div ng-hide="loggedin">
-                <input required type="text" class="form-control input" placeholder="用户名" ng-model="username">
-                <input required type="password" class="form-control input" placeholder="密码" ng-model="password">
-                <button type="submit" ng-click="login()" style="margin-top: 20px"
-                        class="btn btn-lg btn-success btn-block">登录
-                </button>
-            </div>
+            <form class="form-inline" role="form">
+                <div ng-hide="loggedin">
+                    <input required type="text" class="form-control input" placeholder="用户名" ng-model="username">
+                    <input required type="password" class="form-control input" placeholder="密码" ng-model="password">
+                    <button type="submit" ng-click="login()" style="margin-top: 20px"
+                        class="btn btn-lg btn-success btn-block" value="登录">
+                </div>
+            </form>
             <p style="margin-top: 20px;font-size: 16px">{{message}}</p>
         </div>
     </div>
