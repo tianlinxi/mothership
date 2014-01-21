@@ -60,6 +60,7 @@
 }
 
 .lesson-button-icon-unlocked-false {
+    border-radius: 6px 6px 0 0;    
     background-color: #64b7e9;
     height: 72px;
     text-align: center;
@@ -73,6 +74,7 @@
     text-align: center;
     overflow: hidden;
 }
+
 
 .lesson-button-icon-unlocked img {
     margin-top: 6px;
