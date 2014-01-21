@@ -2,6 +2,7 @@
 <html class="login-bg">
 <head>
     <title>数学提高班</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -30,12 +31,21 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script>
-        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+        var userAgent = navigator.userAgent.toLowerCase();
+        var is_chrome;
+        if(userAgent.indexOf('chrome')>-1){ // For Chrome on Windows, MacOS and Android devices.
+            is_chrome = true;
+        }else if(userAgent.indexOf('crios')>-1){ // For Chrome on iOS devices.
+            is_chrome = true;
+        }else{
+            is_chrome = false;
+        }
         vendorName = window.navigator.vendor;
-        if (is_chrome === true && vendorName === "Google Inc.") {
-            // is Google chrome
+        console.log("is_chrome=> "+is_chrome+" and vendorName=> "+vendorName);
+
+        if (is_chrome === true) {
+            // Allowed to render.
         } else {
-            // not Google chrome
             window.open("chrome.html", "_self");
         }
     </script>
